@@ -9,13 +9,13 @@ from typing import Tuple
 
 import cv2
 from detectron2 import model_zoo
-from detectron2.config import get_cfg
+from detectron2.config import get_cfg, CfgNode
 from detectron2.data import MetadataCatalog, Metadata
 from detectron2.data.datasets import register_coco_instances
 from detectron2.engine import DefaultPredictor, DefaultTrainer
 from detectron2.structures import BoxMode
 from detectron2.utils.logger import setup_logger
-from detectron2.utils.visualizer import Visualizer
+from detectron2.utils.visualizer import Visualizer, ColorMode
 
 setup_logger()
 
@@ -66,7 +66,7 @@ def visualize_dataset(dir_path: Path, dataset_name: str):
     visualize_image(train_path / img_data["file_name"], {"annotations": [annotation]}, metadata)
 
 
-def train(dataset_name: str):
+def make_config(dataset_name: str) -> CfgNode:
     cfg = get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"))
     cfg.DATASETS.TRAIN = (dataset_name,)
@@ -83,11 +83,44 @@ def train(dataset_name: str):
     # NOTE: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
 
     cfg.MODEL.DEVICE = 'cpu'
+    return cfg
 
+
+def train(dataset_name: str):
+    cfg = make_config(dataset_name)
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
     trainer = DefaultTrainer(cfg)
     trainer.resume_or_load(resume=False)
     trainer.train()
+
+
+def inference_and_validation(dir_path: Path, dataset_name: str):
+    cfg = make_config(dataset_name)
+    # Inference should use the config with parameters that are used in training
+    # cfg now already contains everything we've set previously. We changed it a little bit for inference:
+    cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7  # set a custom testing threshold
+    predictor = DefaultPredictor(cfg)
+
+    metadata = MetadataCatalog.get(dataset_name)
+
+    _, _, validation_path, validation_labels_path = make_paths(dir_path)
+    with validation_labels_path.open("r") as f:
+        data = json.load(f)
+    data = add_bbox_mode(data)
+    img_data = data["images"][0]
+
+    im = cv2.imread(str(validation_path / img_data["file_name"]))
+    outputs = predictor(im)  # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
+    v = Visualizer(im[:, :, ::-1],
+                   metadata=metadata,
+                   scale=1,
+                   # instance_mode=ColorMode.IMAGE_BW
+                   # remove the colors of unsegmented pixels. This option is only available for segmentation models
+                   )
+    out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+    cv2.imshow("Preview", out.get_image()[:, :, ::-1])
+    cv2.waitKey()
 
 
 def detect():
@@ -114,7 +147,8 @@ def main():
     # detect()
     register_dataset(Path("data/sample2"), "photo_train", "photo_validation")
     # visualize_dataset(Path("data/sample2"), "photo_train")
-    train("photo_train")
+    # train("photo_train")
+    inference_and_validation(Path("data/sample2"), "photo_train")
     pass
 
 
