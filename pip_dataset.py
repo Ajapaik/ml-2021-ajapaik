@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 def get_ajapaik_image_locations(
-        location='https://ajapaik.ee/api/v1/album/state/?id=29124&limit=100',
+        location='https://ajapaik.ee/api/v1/album/state/?id=22197&limit=100',
         dimension='320') -> dict:
     with urllib.request.urlopen(location) as stream:
         response = json.loads(stream.read().decode('utf-8'))
@@ -34,4 +34,4 @@ def download_locations(links: dict, destination_dir: Path = Path('./')):
 
 if __name__ == '__main__':
     links = get_ajapaik_image_locations()
-    download_locations(links, destination_dir=Path('data/'))
+    download_locations(links, destination_dir=Path('data/set1'))
