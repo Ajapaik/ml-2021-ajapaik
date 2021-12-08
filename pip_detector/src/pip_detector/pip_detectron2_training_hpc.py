@@ -57,7 +57,7 @@ def train(dataset_name: str):
 
 
 def main():
-    register_dataset(Path("data/set2"), "pip_train", "pip_validation")
+    register_dataset(Path("../../data/set2"), "pip_train", "pip_validation")
     train("pip_train")
 
 

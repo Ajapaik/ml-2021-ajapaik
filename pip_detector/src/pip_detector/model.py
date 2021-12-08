@@ -21,13 +21,13 @@ setup_logger()
 
 
 class Model:
-    dataset_name: str
-    dataset_name_train: str
-    dataset_name_validation: str
-    device: Optional[str]  # 'gpu' | 'cpu'
-    dataset_location: Path
+    dataset_name: Optional[str] = None
+    dataset_name_train: Optional[str] = None
+    dataset_name_validation: Optional[str] = None
+    device: Optional[str] = None  # 'gpu' | 'cpu'
+    dataset_location: Optional[Path] = None
 
-    def __init__(self, dataset_location, device=None):
+    def __init__(self, dataset_location=None, device=None):
         self.dataset_location = Path(dataset_location)
         self.dataset_name = self.dataset_location.name
         self.dataset_name_train = self.dataset_location.name + '_train'
@@ -42,15 +42,16 @@ class Model:
         trainer.resume_or_load(resume=False)
         trainer.train()
 
-    def detect(self, image_path, show_in_window=False):
+    def detect(self, image_path: Path, threshold: float = 0.5, show_in_window=False):
+        self._register_dataset()
         cfg = get_cfg()
         if self.device:
             cfg.MODEL.DEVICE = self.device
         cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
-        cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set a custom testing threshold
+        cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = threshold  # set a custom testing threshold
         predictor = DefaultPredictor(cfg)
 
-        im = cv2.imread(image_path)
+        im = cv2.imread(image_path.__str__())
 
         # if show_in_window:
         # cv2.imshow('ImageWindow', im)

@@ -25,7 +25,7 @@ def get_ajapaik_image_locations(
     return image_locations
 
 
-def download_locations(links: dict, destination_dir: Path = Path('./')):
+def download_locations(links: dict, destination_dir: Path = Path('../../../')):
     destination_dir.mkdir(parents=True, exist_ok=True)
     for id in links:
         output_path = destination_dir / (str(id) + '.jpg')
@@ -34,4 +34,4 @@ def download_locations(links: dict, destination_dir: Path = Path('./')):
 
 if __name__ == '__main__':
     links = get_ajapaik_image_locations()
-    download_locations(links, destination_dir=Path('data/set1'))
+    download_locations(links, destination_dir=Path('../../data/set1'))
