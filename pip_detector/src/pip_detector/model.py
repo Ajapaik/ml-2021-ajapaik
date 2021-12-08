@@ -60,7 +60,15 @@ class Model:
         if self.predictor is None:
             self.predictor = DefaultPredictor(self.config)
 
+        print(f"Detect called on {image_path}")
+
+        if not image_path.exists():
+            print(f"File not found {image_path}")
+            return
         im = cv2.imread(image_path.__str__())
+        if im is None:
+            print(f"Image is None")
+            return
         outputs = self.predictor(im)
 
         # look at the outputs. See https://detectron2.readthedocs.io/tutorials/models.html#model-output-format for specification
