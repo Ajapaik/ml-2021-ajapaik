@@ -82,7 +82,7 @@ def make_config(dataset_name: str) -> CfgNode:
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1  # only has one class (ballon). (see https://detectron2.readthedocs.io/tutorials/datasets.html#update-the-config-for-new-datasets)
     # NOTE: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
 
-    cfg.MODEL.DEVICE = 'cpu'
+    # cfg.MODEL.DEVICE = 'gpu'
     return cfg
 
 
@@ -145,10 +145,10 @@ def detect():
 
 def main():
     # detect()
-    register_dataset(Path("data/sample2"), "photo_train", "photo_validation")
-    # visualize_dataset(Path("data/sample2"), "photo_train")
-    # train("photo_train")
-    inference_and_validation(Path("data/sample2"), "photo_train")
+    register_dataset(Path("data/set1"), "photo_train", "photo_validation")
+    # visualize_dataset(Path("data/set1"), "photo_train")
+    train("photo_train")
+    # inference_and_validation(Path("data/set1"), "photo_train")
     pass
 
 
