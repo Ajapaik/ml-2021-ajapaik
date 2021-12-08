@@ -38,7 +38,7 @@ def detect(model_path, dataset_path, input_path, threshold, device):
 @click.option('-d', '--device', default=None, type=str)
 def detect_batch(model_path, dataset_path, input_path, output_path, threshold, device):
     model = Model(dataset_path, device=device, output_path=model_path)
-    model.detect_batch(input_path, threshold=threshold)
+    model.detect_batch(input_path, output_path, threshold=threshold)
 
 
 if __name__ == "__main__":
