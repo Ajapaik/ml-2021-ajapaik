@@ -15,7 +15,7 @@ from detectron2.data.datasets import register_coco_instances
 from detectron2.engine import DefaultPredictor, DefaultTrainer
 from detectron2.structures import BoxMode
 from detectron2.utils.logger import setup_logger
-from detectron2.utils.visualizer import Visualizer, ColorMode
+from detectron2.utils.visualizer import Visualizer
 
 setup_logger()
 
@@ -111,7 +111,8 @@ def inference_and_validation(dir_path: Path, dataset_name: str):
     img_data = data["images"][0]
 
     im = cv2.imread(str(validation_path / img_data["file_name"]))
-    outputs = predictor(im)  # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
+    outputs = predictor(
+        im)  # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
     v = Visualizer(im[:, :, ::-1],
                    metadata=metadata,
                    scale=1,
@@ -123,10 +124,12 @@ def inference_and_validation(dir_path: Path, dataset_name: str):
     cv2.waitKey()
 
 
-def detect(cfg):
+def detect(dataset_name, device=None):
+    cfg = make_config(dataset_name)
     cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set a custom testing threshold
-    # cfg.MODEL.DEVICE = 'gpu'
+    if device:
+        cfg.MODEL.DEVICE = device  # 'gpu' | 'cpu'
     predictor = DefaultPredictor(cfg)
 
     im = cv2.imread("./data/color targets/412726.jpg")
@@ -134,17 +137,28 @@ def detect(cfg):
     # cv2.waitKey()
 
     outputs = predictor(im)
-
     # look at the outputs. See https://detectron2.readthedocs.io/tutorials/models.html#model-output-format for specification
-    print(outputs["instances"].pred_classes)
-    print(outputs["instances"].pred_boxes)
+    print(f'Class: {outputs["instances"].pred_classes}')
+    print(f'Bbox: {outputs["instances"].pred_boxes}')
+
+    metadata = MetadataCatalog.get(dataset_name)
+    v = Visualizer(im[:, :, ::-1],
+                   metadata=metadata,
+                   scale=1,
+                   # instance_mode=ColorMode.IMAGE_BW
+                   # remove the colors of unsegmented pixels. This option is only available for segmentation models
+                   )
+
+    out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+    output_image = out.get_image()[:, :, ::-1]
+    cv2.imwrite('detected.jpg', output_image)
 
 
 def main():
     register_dataset(Path("data/set1"), "photo_train", "photo_validation")
     # visualize_dataset(Path("data/set1"), "photo_train")
     # train("photo_train")
-    detect(make_config("photo_train"))
+    detect("photo_train")
     # inference_and_validation(Path("data/set1"), "photo_train")
     pass
 
