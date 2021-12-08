@@ -123,19 +123,16 @@ def inference_and_validation(dir_path: Path, dataset_name: str):
     cv2.waitKey()
 
 
-def detect():
+def detect(cfg):
+    cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set a custom testing threshold
+    # cfg.MODEL.DEVICE = 'gpu'
+    predictor = DefaultPredictor(cfg)
+
     im = cv2.imread("./data/color targets/412726.jpg")
     # cv2.imshow('ImageWindow', im)
     # cv2.waitKey()
 
-    cfg = get_cfg()
-    # add project-specific config (e.g., TensorMask) here if you're not running a model in detectron2's core library
-    cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"))
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set threshold for this model
-    # Find a model from detectron2's model zoo. You can use the https://dl.fbaipublicfiles... url as well
-    cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml")
-    cfg.MODEL.DEVICE = 'gpu'
-    predictor = DefaultPredictor(cfg)
     outputs = predictor(im)
 
     # look at the outputs. See https://detectron2.readthedocs.io/tutorials/models.html#model-output-format for specification
@@ -144,10 +141,10 @@ def detect():
 
 
 def main():
-    # detect()
     register_dataset(Path("data/set1"), "photo_train", "photo_validation")
     # visualize_dataset(Path("data/set1"), "photo_train")
-    train("photo_train")
+    # train("photo_train")
+    detect(make_config("photo_train"))
     # inference_and_validation(Path("data/set1"), "photo_train")
     pass
 
