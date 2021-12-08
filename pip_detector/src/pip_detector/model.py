@@ -55,6 +55,10 @@ class Model:
                threshold: float = 0.5,
                output_image_path: Path = Path("detected.jpg"),
                verbose: bool = True):
+        if image_path.suffix not in ('.jpg', '.jpeg','.png', '.gif'):
+            print(f"Skipping unrecognized file type: {image_path}")
+            return
+
         if self.config is None:
             self.config = self._get_trained_config(threshold)
         if self.predictor is None:
