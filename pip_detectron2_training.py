@@ -134,7 +134,7 @@ def detect():
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set threshold for this model
     # Find a model from detectron2's model zoo. You can use the https://dl.fbaipublicfiles... url as well
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml")
-    cfg.MODEL.DEVICE = 'cpu'
+    cfg.MODEL.DEVICE = 'gpu'
     predictor = DefaultPredictor(cfg)
     outputs = predictor(im)
 
