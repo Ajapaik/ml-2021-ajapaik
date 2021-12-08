@@ -160,8 +160,22 @@ def main():
     # train("photo_train")
     detect("photo_train")
     # inference_and_validation(Path("data/set1"), "photo_train")
-    pass
+
+
+def midsize_dataset_training():
+    register_dataset(Path("data/set2"), "photo_train", "photo_validation")
+    train("photo_train2")
+    # detect("photo_train")
+    # inference_and_validation(Path("data/set1"), "photo_train")
+
+
+def midsize_dataset_detection():
+    register_dataset(Path("data/set2"), "photo_train", "photo_validation")
+    # train("photo_train2")
+    detect("photo_train2")
+    # inference_and_validation(Path("data/set1"), "photo_train")
 
 
 if __name__ == '__main__':
     main()
+    midsize_dataset_training()
