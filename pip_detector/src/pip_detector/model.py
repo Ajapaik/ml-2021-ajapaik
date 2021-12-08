@@ -1,4 +1,5 @@
 """
+    Detectron2 usage and training tutorial
     https://colab.research.google.com/drive/16jcaJoc6bCFAQ96jDe2HwtXj7BMD_-m5#scrollTo=PIbAM2pv-urF
 """
 import copy
@@ -24,65 +25,56 @@ class Model:
     dataset_name: Optional[str] = None
     dataset_name_train: Optional[str] = None
     dataset_name_validation: Optional[str] = None
-    device: Optional[str] = None  # 'gpu' | 'cpu'
+    # Supported devices: # 'cpu, cuda, xpu, mkldnn, opengl, opencl, ideep, hip, ve, ort, mlc, xla, lazy, vulkan, meta, hpu
+    device: Optional[str] = None
     dataset_location: Optional[Path] = None
+    output_path: Optional[Path] = None
 
-    def __init__(self, dataset_location=None, device=None):
+    def __init__(self, dataset_location=None, device=None, output_path=None):
         self.dataset_location = Path(dataset_location)
         self.dataset_name = self.dataset_location.name
         self.dataset_name_train = self.dataset_location.name + '_train'
         self.dataset_name_validation = self.dataset_location.name + '_validation'
         self.device = device
+        self.output_path = output_path
+
+        if self.dataset_location:
+            self._register_dataset()
 
     def train(self):
-        self._register_dataset()
         cfg = self._make_train_config()
         os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
         trainer = DefaultTrainer(cfg)
         trainer.resume_or_load(resume=False)
         trainer.train()
 
-    def detect(self, image_path: Path, threshold: float = 0.5, show_in_window=False):
-        self._register_dataset()
-        cfg = get_cfg()
-        if self.device:
-            cfg.MODEL.DEVICE = self.device
-        cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
-        cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = threshold  # set a custom testing threshold
+    def detect(self, image_path: Path, threshold: float = 0.5):
+        cfg = self._get_trained_config(threshold)
         predictor = DefaultPredictor(cfg)
-
         im = cv2.imread(image_path.__str__())
-
-        # if show_in_window:
-        # cv2.imshow('ImageWindow', im)
-        # cv2.waitKey()
-
         outputs = predictor(im)
         # look at the outputs. See https://detectron2.readthedocs.io/tutorials/models.html#model-output-format for specification
         print(f'Class: {outputs["instances"].pred_classes}')
         print(f'Bbox: {outputs["instances"].pred_boxes}')
 
         metadata = MetadataCatalog.get(self.dataset_name)
-        v = Visualizer(im[:, :, ::-1],
-                       metadata=metadata,
-                       scale=1,
-                       # instance_mode=ColorMode.IMAGE_BW
-                       # remove the colors of unsegmented pixels. This option is only available for segmentation models
-                       )
-
+        v = Visualizer(
+            im[:, :, ::-1],
+            metadata=metadata,
+            scale=1,
+            # instance_mode=ColorMode.IMAGE_BW
+            # remove the colors of unsegmented pixels. This option is only available for segmentation models
+        )
         out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
         output_image = out.get_image()[:, :, ::-1]
         cv2.imwrite('detected.jpg', output_image)
 
-    def inference_and_validation(self):
-        cfg = get_cfg()
+    def inference_and_validation(self, threshold: float):
         # Inference should use the config with parameters that are used in training
-        # cfg now already contains everything we've set previously. We changed it a little bit for inference:
-        cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
-        cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set a custom testing threshold
+        cfg = self._get_trained_config(threshold)
         predictor = DefaultPredictor(cfg)
 
-        metadata = MetadataCatalog.get(self.dataset_name_train)
+        metadata = MetadataCatalog.get(self.dataset_name_validation)
 
         _, _, validation_path, validation_labels_path = self._make_paths()
         with validation_labels_path.open("r") as f:
@@ -93,19 +85,22 @@ class Model:
         im = cv2.imread(str(validation_path / img_data["file_name"]))
         # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
         outputs = predictor(im)
-        v = Visualizer(
-            im[:, :, ::-1],
-            metadata=metadata,
-            scale=1,
-            # instance_mode=ColorMode.IMAGE_BW
-            # remove the colors of unsegmented pixels. This option is only available for segmentation models
-        )
-        out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+
+        # v = Visualizer(
+        #     im[:, :, ::-1],
+        #     metadata=metadata,
+        #     scale=1,
+        #     # instance_mode=ColorMode.IMAGE_BW
+        #     # remove the colors of unsegmented pixels. This option is only available for segmentation models
+        # )
+        # out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
         # cv2.imshow("Preview", out.get_image()[:, :, ::-1])
         # cv2.waitKey()
+
         print(f'Class: {outputs["instances"].pred_classes}')
         print(f'Bbox: {outputs["instances"].pred_boxes}')
 
+    @staticmethod
     def _add_bbox_mode(data: dict) -> dict:
         data = copy.copy(data)
         for note in data["annotations"]:
@@ -133,8 +128,17 @@ class Model:
         cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1  # only has one class (ballon). (see https://detectron2.readthedocs.io/tutorials/datasets.html#update-the-config-for-new-datasets)
         # NOTE: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
 
+        if self.output_path:
+            cfg.OUTPUT_DIR = self.output_path.__str__()
         if self.device:
             cfg.MODEL.DEVICE = self.device
+
+        return cfg
+
+    def _get_trained_config(self, threshold: float) -> CfgNode:
+        cfg = self._make_train_config()
+        cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
+        cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = threshold
         return cfg
 
     def _make_paths(self) -> Tuple[Path, Path, Path, Path]:
