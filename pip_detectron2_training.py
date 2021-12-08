@@ -163,8 +163,8 @@ def main():
 
 
 def midsize_dataset_training():
-    dataset_name = "photo_train2"
-    validation_name = "photo_validation2"
+    dataset_name = "photo_train"
+    validation_name = "photo_validation"
     register_dataset(Path("data/set2"), dataset_name, validation_name)
     train(dataset_name)
     # detect("photo_train")
@@ -172,8 +172,8 @@ def midsize_dataset_training():
 
 
 def midsize_dataset_detection():
-    dataset_name = "photo_train2"
-    validation_name = "photo_validation2"
+    dataset_name = "photo_train"
+    validation_name = "photo_validation"
     register_dataset(Path("data/set2"), dataset_name, validation_name)
     # train(dataset_name)
     detect(dataset_name)
