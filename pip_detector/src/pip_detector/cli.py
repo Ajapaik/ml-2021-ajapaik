@@ -36,7 +36,7 @@ def detect(model_path, dataset_path, input_path, threshold, device):
 @click.option('-o', '--output_path', default=None, required=True, type=Path)
 @click.option('-t', '--threshold', default=0.5, type=float)
 @click.option('-d', '--device', default=None, type=str)
-def detect_batch(model_path, dataset_path, input_path, threshold, device):
+def detect_batch(model_path, dataset_path, input_path, output_path, threshold, device):
     model = Model(dataset_path, device=device, output_path=model_path)
     model.detect_batch(input_path, threshold=threshold)
 
