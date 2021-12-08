@@ -29,6 +29,8 @@ class Model:
     device: Optional[str] = None
     dataset_location: Optional[Path] = None
     output_path: Optional[Path] = None
+    config: Optional[CfgNode] = None
+    predictor: Optional[DefaultPredictor] = None
 
     def __init__(self, dataset_location=None, device=None, output_path=None):
         self.dataset_location = Path(dataset_location)
@@ -48,16 +50,25 @@ class Model:
         trainer.resume_or_load(resume=False)
         trainer.train()
 
-    def detect(self, image_path: Path, threshold: float = 0.5):
-        cfg = self._get_trained_config(threshold)
-        predictor = DefaultPredictor(cfg)
-        im = cv2.imread(image_path.__str__())
-        outputs = predictor(im)
-        # look at the outputs. See https://detectron2.readthedocs.io/tutorials/models.html#model-output-format for specification
-        print(f'Class: {outputs["instances"].pred_classes}')
-        print(f'Bbox: {outputs["instances"].pred_boxes}')
+    def detect(self,
+               image_path: Path,
+               threshold: float = 0.5,
+               output_image_path: Path = Path("detected.jpg"),
+               verbose: bool = True):
+        if self.config is None:
+            self.config = self._get_trained_config(threshold)
+        if self.predictor is None:
+            self.predictor = DefaultPredictor(self.config)
 
-        metadata = MetadataCatalog.get(self.dataset_name)
+        im = cv2.imread(image_path.__str__())
+        outputs = self.predictor(im)
+
+        # look at the outputs. See https://detectron2.readthedocs.io/tutorials/models.html#model-output-format for specification
+        if verbose:
+            print(f'Class: {outputs["instances"].pred_classes}')
+            print(f'Bbox: {outputs["instances"].pred_boxes}')
+
+        metadata = MetadataCatalog.get(self.dataset_name_train)
         v = Visualizer(
             im[:, :, ::-1],
             metadata=metadata,
@@ -67,14 +78,22 @@ class Model:
         )
         out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
         output_image = out.get_image()[:, :, ::-1]
-        cv2.imwrite('detected.jpg', output_image)
+        cv2.imwrite(output_image_path.__str__(), output_image)
+
+    def detect_batch(self, input_path: Path, output_path: Path, threshold: float = 0.5):
+        if not input_path.exists() or not input_path.is_dir():
+            raise ValueError("Input path does not exist")
+        output_path.mkdir(parents=True, exist_ok=True)
+        for p in input_path.iterdir():
+            output_image_path = output_path / (p.stem + '_prediction' + p.suffix)
+            self.detect(p, threshold=threshold, output_image_path=output_image_path, verbose=False)
 
     def inference_and_validation(self, threshold: float):
         # Inference should use the config with parameters that are used in training
         cfg = self._get_trained_config(threshold)
         predictor = DefaultPredictor(cfg)
 
-        metadata = MetadataCatalog.get(self.dataset_name_validation)
+        # metadata = MetadataCatalog.get(self.dataset_name_validation)
 
         _, _, validation_path, validation_labels_path = self._make_paths()
         with validation_labels_path.open("r") as f:
