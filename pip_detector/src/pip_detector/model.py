@@ -6,7 +6,7 @@ import copy
 import json
 import os
 from pathlib import Path
-from typing import Tuple, Optional
+from typing import Tuple, Optional, List
 
 import cv2
 from detectron2 import model_zoo
@@ -54,7 +54,7 @@ class Model:
                image_path: Path,
                threshold: float = 0.5,
                output_image_path: Path = Path("detected.jpg"),
-               verbose: bool = True):
+               verbose: bool = True) -> List[List[float]]:
         if image_path.suffix not in ('.jpg', '.jpeg','.png', '.gif'):
             print(f"Skipping unrecognized file type: {image_path}")
             return
@@ -77,8 +77,7 @@ class Model:
 
         # look at the outputs. See https://detectron2.readthedocs.io/tutorials/models.html#model-output-format for specification
         if verbose:
-            print(f'Class: {outputs["instances"].pred_classes}')
-            print(f'Bbox: {outputs["instances"].pred_boxes}')
+            print(f'Bounding boxes: {outputs["instances"].pred_boxes.tensor.tolist()}')
 
         metadata = MetadataCatalog.get(self.dataset_name_train)
         v = Visualizer(
@@ -92,13 +91,24 @@ class Model:
         output_image = out.get_image()[:, :, ::-1]
         cv2.imwrite(output_image_path.__str__(), output_image)
 
+        # returning bbox coordinates
+        return outputs["instances"].pred_boxes.tensor.tolist()
+
     def detect_batch(self, input_path: Path, output_path: Path, threshold: float = 0.5):
         if not input_path.exists() or not input_path.is_dir():
             raise ValueError("Input path does not exist")
         output_path.mkdir(parents=True, exist_ok=True)
+        result = []
         for p in input_path.iterdir():
             output_image_path = output_path / (p.stem + '_prediction' + p.suffix)
-            self.detect(p, threshold=threshold, output_image_path=output_image_path, verbose=False)
+            bbox = self.detect(p, threshold=threshold, output_image_path=output_image_path, verbose=False)
+            result.append({
+                "file_name": p.name,
+                "bbox": bbox
+            })
+        json_output_path = output_path / "predictions.json"
+        with json_output_path.open("w") as f:
+            json.dump(result, f)
 
     def inference_and_validation(self, threshold: float):
         # Inference should use the config with parameters that are used in training
