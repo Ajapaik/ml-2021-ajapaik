@@ -76,7 +76,7 @@ class ObjectDetector:
 
         # determine only the *output* layer names that we need from YOLO
         ln = net.getLayerNames()
-        ln = [ln[i[0] - 1] for i in net.getUnconnectedOutLayers()]
+        ln = [ln[i - 1] for i in net.getUnconnectedOutLayers()]
 
 
         blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416),
