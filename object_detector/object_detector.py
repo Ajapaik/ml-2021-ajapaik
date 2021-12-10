@@ -188,7 +188,7 @@ if __name__ == "__main__":
     if ObjectDetector.modules_installed():
         args = parser.parse_args()
         if args.image_path is None:
-           print(f"--image_path not provided, searching {args.dir} for image files...")
+            print(f"--image_path not provided, searching {args.dir} for image files...")
             image_files = ObjectDetector.load_image_files(args.dir)
             if len(image_files) <=0:
                 print("No Image file(s) found")
