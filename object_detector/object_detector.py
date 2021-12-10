@@ -178,13 +178,18 @@ if __name__ == "__main__":
         default=float(0.25), help="Detection Confidence Threshold to apply"
     )
 
+    parser.add_argument(
+        "--image-dir", "-d", dest="dir",
+        default=os.getcwd(), help="Directory containing image file"
+    )
+
     
 
     if ObjectDetector.modules_installed():
         args = parser.parse_args()
         if args.image_path is None:
-            print("--image_path arg not provided, searching current directory for image files..")
-            image_files = ObjectDetector.load_image_files()
+           print(f"--image_path not provided, searching {args.dir} for image files...")
+            image_files = ObjectDetector.load_image_files(args.dir)
             if len(image_files) <=0:
                 print("No Image file(s) found")
             for i,image in enumerate(image_files,1):
