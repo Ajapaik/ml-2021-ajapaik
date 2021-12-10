@@ -43,7 +43,7 @@ class ObjectDetector:
         # defaults to "current" dir
         imdir = dir
         # various extensions of files that can be fetched
-        ext = ['png', 'jpg', 'gif']
+        ext = ['png', 'jpg', 'gif','jpeg']
         files = []
         [files.extend(glob.glob(imdir + '*.' + e)) for e in ext]
         return files
