@@ -175,7 +175,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--threshold", "-t", dest="threshold",
-        default=float(0.5), help="Detection Confidence Threshold to apply"
+        default=float(0.25), help="Detection Confidence Threshold to apply"
     )
 
     
