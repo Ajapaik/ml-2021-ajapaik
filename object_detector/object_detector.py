@@ -9,14 +9,6 @@ import json
 from pathlib import Path 
 
 class ObjectDetector:
-# Check if required modules are installed
-    def modules_installed():
-        if "numpy" and "cv2" and "glob" and "json" and "argparse" in sys.modules:
-            return True
-        else:
-            print("You might need to check to confirm that Numpy and CV2 are installed")
-            return False
-
     def file_exist(file_names_list: list) -> bool:
         if all(list(map(os.path.isfile,file_names_list))):
             return True
@@ -48,13 +40,13 @@ class ObjectDetector:
         [files.extend(glob.glob(imdir + '*.' + e)) for e in ext]
         return files
 
-    def save_to_json(file_name,data):
-        full_file_path = file_name + ".json"
+    def save_to_json(dir,file_name,data):
+        full_file_path = dir  + file_name + ".json"
         with open(full_file_path, 'w') as f:
             json.dump(data, f, ensure_ascii=False)
-        print(f"{full_file_path} with bounding cordinates saved")
+        print(f" Saved {full_file_path} with bounding box cordinates.")
 
-    def object_detection(image_path,label_path=None,config_path=None,weight_path=None,threshold=0.25):
+    def object_detection(image_path,output_dir,label_path=None,config_path=None,weight_path=None,threshold=0.25,):
         INPUT_FILE= image_path
         CONFIDENCE_THRESHOLD = threshold
         
@@ -70,13 +62,13 @@ class ObjectDetector:
 
 
         net = cv2.dnn.readNetFromDarknet(CONFIG_FILE, WEIGHTS_FILE)
-
+        
         image = cv2.imread(INPUT_FILE)
         (H, W) = image.shape[:2]
 
         # determine only the *output* layer names that we need from YOLO
         ln = net.getLayerNames()
-        ln = [ln[i - 1] for i in net.getUnconnectedOutLayers()]
+        ln = [ln[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 
 
         blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416),
@@ -148,10 +140,10 @@ class ObjectDetector:
         # Maybe a flag to save results of a batch to same json?
         _file_name = Path(image_path).name
         # safe file to json 
-        ObjectDetector.save_to_json(_file_name,data)   
+        ObjectDetector.save_to_json(output_dir,_file_name,data)   
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(
         description="Script to Object Detection with Yolo4."
     )
@@ -179,36 +171,43 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--image-dir", "-d", dest="dir",
+        "--image-dir", "-d", dest="input_dir",
         default=os.getcwd(), help="Directory containing image file"
+    )
+
+    parser.add_argument(
+        "--output-dir", "-o", dest="output_dir",
+        default=os.getcwd(), help="Directory where output should be  stored"
     )
 
     
 
-    if ObjectDetector.modules_installed():
-        args = parser.parse_args()
-        if args.image_path is None:
-            print(f"--image_path not provided, searching {args.dir} for image files...")
-            image_files = ObjectDetector.load_image_files(args.dir)
-            if len(image_files) <=0:
-                print("No Image file(s) found")
-            for i,image in enumerate(image_files,1):
-                print(f"Running Object Detection on {i} of {len(image_files)} images")
-                ObjectDetector.object_detection(
+    args = parser.parse_args()
+    if args.image_path is None:
+        print(f"--image_path not provided, searching {args.input_dir} for image files...")
+        image_files = ObjectDetector.load_image_files(args.input_dir)
+        if len(image_files) <=0:
+            print("No Image file(s) found")
+        for i,image in enumerate(image_files,1):
+            print(f"Running Object Detection on {i} of {len(image_files)} images")
+            ObjectDetector.object_detection(
                         image,
+                        args.output_dir,
                         args.label_path, 
                         args.config_path, 
                         args.weight_path,
                         float(args.threshold)
                       )
-        else:
+    else:
             ObjectDetector.object_detection(
                         args.image_path,
+                        args.output_dir,
                         args.label_path, 
                         args.config_path, 
                         args.weight_path,
                         float(args.threshold)
                       )
 
-                    
+if __name__ == "__main__":
+    main()              
        
