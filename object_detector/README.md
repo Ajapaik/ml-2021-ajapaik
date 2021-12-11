@@ -48,7 +48,7 @@ Single File detection sample
 ```
 https://github.com/iharsuvorau/ml-2021-ajapaik/blob/main/object_detector/sampleImage/file.PNG
 
-<kbd><img src="https://github.com/iharsuvorau/ml-2021-ajapaik/blob/main/object_detector/sampleImage/file.PNG" width="600" height="600"> <kbd>
+<kbd><img src="https://github.com/iharsuvorau/ml-2021-ajapaik/blob/main/object_detector/sampleImage/file.PNG" > <kbd>
 
 Directory Detection Sample
 ```
