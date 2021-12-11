@@ -56,4 +56,5 @@ Directory Detection Sample
 <kbd><img src="https://github.com/iharsuvorau/ml-2021-ajapaik/blob/main/object_detector/sampleImage/directory.PNG" > <kbd>
 
 ## statistics
-
+  
+The dataset used to train the data was the Coco dataset and its sizes is, The keywords that could be detected are , The accuracy of the prediction is 
