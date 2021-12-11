@@ -16,11 +16,11 @@ class ObjectDetector:
             print("Please check one of the Config Files does not exist")
             return False
 
-    # if the script is run from the darknet folder, these defaults should be sane
-    # if run from a different location or if different naming conventions are used, please update below
+    # if coco.names, yolov4.{cfg,weights} are relative to cli-tool
+    # no need to pass them as cli options
     def set_default_config():
-        LABELS_FILE='data/coco.names'
-        CONFIG_FILE='cfg/yolov4.cfg'
+        LABELS_FILE='coco.names'
+        CONFIG_FILE='yolov4.cfg'
         WEIGHTS_FILE='yolov4.weights'
         CONFIDENCE_THRESHOLD=0.25
 
@@ -149,7 +149,7 @@ def main():
     )
     parser.add_argument(
         "--config_path", "-c", dest="config_path",
-        default="cfg/yolov4.cfg", help="Path to yolov4.cfg"
+        default="yolov4.cfg", help="Path to yolov4.cfg"
     )
     parser.add_argument(
         "--weight_path", "-w", dest="weight_path",
@@ -157,7 +157,7 @@ def main():
     )
     parser.add_argument(
         "--label_path", "-l", dest="label_path",
-        default="cfg/coco.names", help="Path to coco.names."
+        default="coco.names", help="Path to coco.names."
     )
 
     parser.add_argument(
@@ -209,5 +209,5 @@ def main():
                       )
 
 if __name__ == "__main__":
-    main()              
+    main()                
        
