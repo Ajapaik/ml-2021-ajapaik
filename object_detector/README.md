@@ -78,4 +78,4 @@ optional arguments:
 
 ##  Statistics
 
-Object detection is ran against the coco dataset(80 [classes](https://github.com/AlexeyAB/darknet/blob/master/cfg/coco.names), 328k images). We could detect windmills, churches, lighthouses, people, bicycles, cars, among others objects in the random partnerr's images .
+Object detection is ran against the coco dataset(80 [classes](https://github.com/AlexeyAB/darknet/blob/master/cfg/coco.names), 328k images). We could detect windmills, churches, lighthouses, people, bicycles, cars, among others objects in the random partner's images .
