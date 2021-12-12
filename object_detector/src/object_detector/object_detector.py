@@ -135,7 +135,7 @@ class ObjectDetector:
                 # extract the bounding box coordinates
                 (x, y) = (boxes[i][0], boxes[i][1])
                 (w, h) = (boxes[i][2], boxes[i][3])
-                data.append({"label":LABELS[classIDs[i]],  "confidence":"{:.2f}".format(confidences[i]*100), "left_X":x, "top_y":y,"width":w,"heigth":h})
+                data.append({"label":LABELS[classIDs[i]],  "confidence":"{:.2f}".format(confidences[i]*100), "left_x":x, "top_y":y,"width":w,"height":h})
         # save file ot image_path.json 
         # Maybe a flag to save results of a batch to same json?
         _file_name = Path(image_path).name
