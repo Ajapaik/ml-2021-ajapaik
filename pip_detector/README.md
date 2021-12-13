@@ -20,7 +20,7 @@ $ virtualenv venv
 ## Usage
 
 ```shell
-(venv) $ pip_detector detect-batch -p data/set2 -i data/set2/validation -o results/set2_validation_json -d cpu
+(venv) $ pip_detector detect-batch -p data/set2 -i data/set2/validation -o results/set2_validation -d cpu
 ```
 
 If a user provides a path to a folder with images and an output folder, the tool saves  visualized predictions on images and a JSON file with a list of objects. Each object has only 2 attributes: `file_name` and `bbox`. `bbox` is an list of lists, because one image can have multiple images inside (e.g., collages like https://ajapaik.ee/?album=56263&photo=276552&order1=time&order2=added&page=1)
