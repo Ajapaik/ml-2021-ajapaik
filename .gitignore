@@ -129,6 +129,6 @@ dmypy.json
 .pyre/
 
 .idea
-pip_detector/data/
 tools/
-pip_detector/output/
+
+.DS_Store
