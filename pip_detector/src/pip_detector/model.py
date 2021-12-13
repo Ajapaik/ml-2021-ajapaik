@@ -55,7 +55,7 @@ class Model:
                threshold: float = 0.5,
                output_image_path: Path = Path("detected.jpg"),
                verbose: bool = True) -> List[List[float]]:
-        if image_path.suffix not in ('.jpg', '.jpeg','.png', '.gif'):
+        if image_path.suffix not in ('.jpg', '.jpeg', '.png', '.gif'):
             print(f"Skipping unrecognized file type: {image_path}")
             return
 
@@ -115,8 +115,6 @@ class Model:
         cfg = self._get_trained_config(threshold)
         predictor = DefaultPredictor(cfg)
 
-        # metadata = MetadataCatalog.get(self.dataset_name_validation)
-
         _, _, validation_path, validation_labels_path = self._make_paths()
         with validation_labels_path.open("r") as f:
             data = json.load(f)
@@ -126,17 +124,6 @@ class Model:
         im = cv2.imread(str(validation_path / img_data["file_name"]))
         # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
         outputs = predictor(im)
-
-        # v = Visualizer(
-        #     im[:, :, ::-1],
-        #     metadata=metadata,
-        #     scale=1,
-        #     # instance_mode=ColorMode.IMAGE_BW
-        #     # remove the colors of unsegmented pixels. This option is only available for segmentation models
-        # )
-        # out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-        # cv2.imshow("Preview", out.get_image()[:, :, ::-1])
-        # cv2.waitKey()
 
         print(f'Class: {outputs["instances"].pred_classes}')
         print(f'Bbox: {outputs["instances"].pred_boxes}')
@@ -190,53 +177,10 @@ class Model:
         return train_path, train_labels_path, validation_path, validation_labels_path
 
 
-# def visualize_image(img_path: Path, annotations: dict, metadata: Metadata):
-#     img = cv2.imread(str(img_path))
-#     viz = Visualizer(img[:, :, ::-1], metadata=metadata, scale=1)
-#     out = viz.draw_dataset_dict(annotations)
-#     cv2.imshow("Preview", out.get_image()[:, :, ::-1])
-#     cv2.waitKey()
-
-
-# def visualize_dataset(dir_path: Path, dataset_name: str):
-#     train_path, train_labels_path, _, _ = make_paths(dir_path)
-#     metadata = MetadataCatalog.get(dataset_name)
-#
-#     with train_labels_path.open("r") as f:
-#         data = json.load(f)
-#
-#     data = add_bbox_mode(data)
-#
-#     img_data = data["images"][0]
-#     for note in data["annotations"]:
-#         if note["image_id"] == img_data["id"]:
-#             annotation = note
-#
-#     visualize_image(train_path / img_data["file_name"], {"annotations": [annotation]}, metadata)
-
-
 def main():
     model = Model("data/set2")
     model.train()
     model.detect("data/color targets/412726.jpg")
-
-
-# def midsize_dataset_training():
-#     dataset_name = "photo_train"
-#     validation_name = "photo_validation"
-#     register_dataset(Path("data/set2"), dataset_name, validation_name)
-#     train(dataset_name)
-#     # detect("photo_train")
-#     # inference_and_validation(Path("data/set1"), "photo_train")
-#
-#
-# def midsize_dataset_detection():
-#     dataset_name = "photo_train"
-#     validation_name = "photo_validation"
-#     register_dataset(Path("data/set2"), dataset_name, validation_name)
-#     # train(dataset_name)
-#     detect(dataset_name)
-#     # inference_and_validation(Path("data/set1"), "photo_train")
 
 
 if __name__ == '__main__':

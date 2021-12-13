@@ -1,3 +1,6 @@
+"""
+    This script isn't a part of the CLI tool, but a helper script for image downloading from ajapaik.ee API.
+"""
 import json
 
 import urllib.request
