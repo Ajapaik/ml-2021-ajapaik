@@ -129,7 +129,6 @@ dmypy.json
 .pyre/
 
 .idea
-tools/
 
 .DS_Store
 pip_detector/output

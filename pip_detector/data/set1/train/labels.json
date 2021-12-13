@@ -1,0 +1,358 @@
+{
+  "info": {
+    "year": 2021,
+    "version": "1.0",
+    "description": "VIA project exported to COCO format using VGG Image Annotator (http://www.robots.ox.ac.uk/~vgg/software/via/)",
+    "contributor": "",
+    "url": "http://www.robots.ox.ac.uk/~vgg/software/via/",
+    "date_created": "Thu Nov 11 2021 22:08:05 GMT+0200 (EET)"
+  },
+  "images": [
+    {
+      "id": 412726,
+      "width": 400,
+      "height": 367,
+      "file_name": "412726.jpg",
+      "license": 0,
+      "date_captured": ""
+    },
+    {
+      "id": 412727,
+      "width": 400,
+      "height": 380,
+      "file_name": "412727.jpg",
+      "license": 0,
+      "date_captured": ""
+    },
+    {
+      "id": 412728,
+      "width": 400,
+      "height": 375,
+      "file_name": "412728.jpg",
+      "license": 0,
+      "date_captured": ""
+    },
+    {
+      "id": 412729,
+      "width": 360,
+      "height": 400,
+      "file_name": "412729.jpg",
+      "license": 0,
+      "date_captured": ""
+    },
+    {
+      "id": 412730,
+      "width": 362,
+      "height": 400,
+      "file_name": "412730.jpg",
+      "license": 0,
+      "date_captured": ""
+    },
+    {
+      "id": 412731,
+      "width": 362,
+      "height": 400,
+      "file_name": "412731.jpg",
+      "license": 0,
+      "date_captured": ""
+    },
+    {
+      "id": 412732,
+      "width": 346,
+      "height": 400,
+      "file_name": "412732.jpg",
+      "license": 0,
+      "date_captured": ""
+    },
+    {
+      "id": 412733,
+      "width": 274,
+      "height": 400,
+      "file_name": "412733.jpg",
+      "license": 0,
+      "date_captured": ""
+    },
+    {
+      "id": 412734,
+      "width": 275,
+      "height": 400,
+      "file_name": "412734.jpg",
+      "license": 0,
+      "date_captured": ""
+    },
+    {
+      "id": 412735,
+      "width": 400,
+      "height": 384,
+      "file_name": "412735.jpg",
+      "license": 0,
+      "date_captured": ""
+    }
+  ],
+  "annotations": [
+    {
+      "segmentation": [
+        [
+          18,
+          18,
+          380,
+          18,
+          380,
+          279,
+          18,
+          279
+        ]
+      ],
+      "area": 94482,
+      "bbox": [
+        18,
+        18,
+        362,
+        261
+      ],
+      "iscrowd": 0,
+      "id": 1,
+      "image_id": 412726,
+      "category_id": 1
+    },
+    {
+      "segmentation": [
+        [
+          12,
+          11,
+          388,
+          11,
+          388,
+          309,
+          12,
+          309
+        ]
+      ],
+      "area": 112048,
+      "bbox": [
+        12,
+        11,
+        376,
+        298
+      ],
+      "iscrowd": 0,
+      "id": 2,
+      "image_id": 412727,
+      "category_id": 1
+    },
+    {
+      "segmentation": [
+        [
+          9,
+          11,
+          394,
+          11,
+          394,
+          307,
+          9,
+          307
+        ]
+      ],
+      "area": 113960,
+      "bbox": [
+        9,
+        11,
+        385,
+        296
+      ],
+      "iscrowd": 0,
+      "id": 3,
+      "image_id": 412728,
+      "category_id": 1
+    },
+    {
+      "segmentation": [
+        [
+          65,
+          11,
+          352,
+          11,
+          352,
+          382,
+          65,
+          382
+        ]
+      ],
+      "area": 106477,
+      "bbox": [
+        65,
+        11,
+        287,
+        371
+      ],
+      "iscrowd": 0,
+      "id": 4,
+      "image_id": 412729,
+      "category_id": 1
+    },
+    {
+      "segmentation": [
+        [
+          65,
+          12,
+          353,
+          12,
+          353,
+          380,
+          65,
+          380
+        ]
+      ],
+      "area": 105984,
+      "bbox": [
+        65,
+        12,
+        288,
+        368
+      ],
+      "iscrowd": 0,
+      "id": 5,
+      "image_id": 412730,
+      "category_id": 1
+    },
+    {
+      "segmentation": [
+        [
+          72,
+          5,
+          356,
+          5,
+          356,
+          393,
+          72,
+          393
+        ]
+      ],
+      "area": 110192,
+      "bbox": [
+        72,
+        5,
+        284,
+        388
+      ],
+      "iscrowd": 0,
+      "id": 6,
+      "image_id": 412731,
+      "category_id": 1
+    },
+    {
+      "segmentation": [
+        [
+          67,
+          10,
+          337,
+          10,
+          337,
+          371,
+          67,
+          371
+        ]
+      ],
+      "area": 97470,
+      "bbox": [
+        67,
+        10,
+        270,
+        361
+      ],
+      "iscrowd": 0,
+      "id": 7,
+      "image_id": 412732,
+      "category_id": 1
+    },
+    {
+      "segmentation": [
+        [
+          6,
+          10,
+          267,
+          10,
+          267,
+          335,
+          6,
+          335
+        ]
+      ],
+      "area": 84825,
+      "bbox": [
+        6,
+        10,
+        261,
+        325
+      ],
+      "iscrowd": 0,
+      "id": 8,
+      "image_id": 412733,
+      "category_id": 1
+    },
+    {
+      "segmentation": [
+        [
+          6,
+          9,
+          269,
+          9,
+          269,
+          337,
+          6,
+          337
+        ]
+      ],
+      "area": 86264,
+      "bbox": [
+        6,
+        9,
+        263,
+        328
+      ],
+      "iscrowd": 0,
+      "id": 9,
+      "image_id": 412734,
+      "category_id": 1
+    },
+    {
+      "segmentation": [
+        [
+          6,
+          15,
+          393,
+          15,
+          393,
+          308,
+          6,
+          308
+        ]
+      ],
+      "area": 113391,
+      "bbox": [
+        6,
+        15,
+        387,
+        293
+      ],
+      "iscrowd": 0,
+      "id": 10,
+      "image_id": 412735,
+      "category_id": 1
+    }
+  ],
+  "licenses": [
+    {
+      "id": 0,
+      "name": "Unknown License",
+      "url": ""
+    }
+  ],
+  "categories": [
+    {
+      "supercategory": "type",
+      "id": 1,
+      "name": "photo"
+    }
+  ]
+}
