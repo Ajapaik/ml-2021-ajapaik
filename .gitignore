@@ -132,3 +132,4 @@ dmypy.json
 tools/
 
 .DS_Store
+pip_detector/output

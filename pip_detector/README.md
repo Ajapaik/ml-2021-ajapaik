@@ -1,5 +1,9 @@
 # Picture-in-Picture Detection (PIP)
 
+Artefacts that aren't committed to the repository:
+
+- **Trained model** files: https://owncloud.ut.ee/owncloud/index.php/s/4Hf8f6FABEmSKo6 (~190 MB)
+
 The tool uses [detectron2](https://github.com/facebookresearch/detectron2) to train it on detection of picture-in-picture areas from photographs with additional decorative elements, frames, collages, e.g., https://ajapaik.ee/?album=56263&photo=276552&order1=time&order2=added&page=1.
 
 ## Setup
